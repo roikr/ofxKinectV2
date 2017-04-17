@@ -27,4 +27,6 @@ class ofApp : public ofBaseApp{
     
         vector <ofTexture> texDepth;
         vector <ofTexture> texRGB;
+    
+        ofPixels pixels;
 };

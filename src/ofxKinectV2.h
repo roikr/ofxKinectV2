@@ -35,8 +35,8 @@ class ofxKinectV2 : public ofThread{
     
         bool isFrameNew();
     
-        ofPixels getDepthPixels();
-        ofPixels getRgbPixels();
+        ofPixels &getDepthPixels();
+        ofPixels &getRgbPixels();
         ofFloatPixels getRawDepthPixels();
     
         ofParameterGroup params;

@@ -55,7 +55,7 @@ int ofProtonect::openKinect(string serial){
           
 //      pipeline = new libfreenect2::CpuPacketPipeline();
 //        pipeline = new libfreenect2::OpenGLPacketPipeline();
-        pipeline = new libfreenect2::OpenCLPacketPipeline();
+        pipeline = new libfreenect2::OpenCLPacketPipeline(0);
 
       if(pipeline)
       {
@@ -72,6 +72,7 @@ int ofProtonect::openKinect(string serial){
       listener = new libfreenect2::SyncMultiFrameListener(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth);
       undistorted = new libfreenect2::Frame(512, 424, 4);
       registered  = new libfreenect2::Frame(512, 424, 4);
+        bigFrame = new libfreenect2::Frame(1920,1080,4);
 
       dev->setColorFrameListener(listener);
       dev->setIrAndDepthFrameListener(listener);
@@ -94,9 +95,14 @@ void ofProtonect::updateKinect(ofPixels & rgbPixels, ofFloatPixels & depthPixels
         libfreenect2::Frame *rgb = frames[libfreenect2::Frame::Color];
         libfreenect2::Frame *ir = frames[libfreenect2::Frame::Ir];
         libfreenect2::Frame *depth = frames[libfreenect2::Frame::Depth];
+        
+        registration->apply(rgb, depth, undistorted, registered,true,bigFrame);
+        
 
-        rgbPixels.setFromPixels(rgb->data, rgb->width, rgb->height, 3);
-        depthPixels.setFromPixels((float *)depth->data, ir->width, ir->height, 1);
+//        rgbPixels.setFromPixels(registered->data, registered->width, registered->height, 4);
+//        depthPixels.setFromPixels((float *)depth->data, ir->width, ir->height, 1);
+        rgbPixels.setFromPixels(rgb->data, rgb->width, rgb->height, 4);
+        depthPixels.setFromPixels((float *)bigFrame->data, bigFrame->width, bigFrame->height, 1);
 
         listener->release(frames);
     }
@@ -120,6 +126,11 @@ int ofProtonect::closeKinect(){
 
       delete registered;
       registered = NULL;
+      
+      if (bigFrame) {
+          delete bigFrame;
+          bigFrame = NULL;
+      }
       
       delete registration;
       bOpened = false; 

@@ -17,8 +17,11 @@ ofxKinectV2::ofxKinectV2(){
     
     //set default distance range to 50cm - 600cm
     
-    params.add(minDistance.set("minDistance", 500, 0, 12000));
-    params.add(maxDistance.set("maxDistance", 6000, 0, 12000));
+//    params.add(minDistance.set("minDistance", 500, 0, 12000));
+//    params.add(maxDistance.set("maxDistance", 6000, 0, 12000));
+    
+    params.add(minDistance.set("minDistance", 500, 0, 2000));
+    params.add(maxDistance.set("maxDistance", 1000, 0, 4000));
 }
 
 //--------------------------------------------------------------------------------
@@ -154,7 +157,7 @@ bool ofxKinectV2::isFrameNew(){
 }
 
 //--------------------------------------------------------------------------------
-ofPixels ofxKinectV2::getDepthPixels(){
+ofPixels &ofxKinectV2::getDepthPixels(){
     return depthPix;
 }
 
@@ -164,7 +167,7 @@ ofFloatPixels ofxKinectV2::getRawDepthPixels(){
 }
 
 //--------------------------------------------------------------------------------
-ofPixels ofxKinectV2::getRgbPixels(){
+ofPixels &ofxKinectV2::getRgbPixels(){
     return rgbPix; 
 }
 

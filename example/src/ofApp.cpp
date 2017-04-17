@@ -33,6 +33,7 @@ void ofApp::setup(){
     }
 
     panel.loadFromFile("settings.xml");
+    pixels.allocate(1920, 1080, 4);
 
 }
 
@@ -42,8 +43,17 @@ void ofApp::update(){
     for(int d = 0; d < kinects.size(); d++){
         kinects[d]->update();
         if( kinects[d]->isFrameNew() ){
-            texDepth[d].loadData( kinects[d]->getDepthPixels() );
+            //texDepth[d].loadData( kinects[d]->getDepthPixels() );
+            
+            ofPixels &depthPixels(kinects[d]->getDepthPixels());
+            ofPixels &rgbPixels(kinects[d]->getRgbPixels());
+            
+            for(int i = 0; i < depthPixels.size(); i++){
+                rgbPixels[i*4+3]=(depthPixels[i]>0 && depthPixels[i]<255) ? 255 : 0;
+            }
+            
             texRGB[d].loadData( kinects[d]->getRgbPixels() );
+            
         }
     }
 }
@@ -52,16 +62,20 @@ void ofApp::update(){
 void ofApp::draw(){
     ofDrawBitmapString("ofxKinectV2: Work in progress addon.\nBased on the excellent work by the OpenKinect libfreenect2 team\n\n-Requires USB 3.0 port ( superspeed )\n-Requires patched libusb. If you have the libusb from ofxKinect ( v1 ) linked to your project it will prevent superspeed on Kinect V2", 10, 14);
 
+    ofPushMatrix();
+    ofScale(0.5,0.5);
     for(int d = 0; d < kinects.size(); d++){
         float dwHD = 1920/4;
         float dhHD = 1080/4;
         
         float shiftY = 100 + ((10 + texDepth[d].getHeight()) * d);
-    
-        texDepth[d].draw(200, shiftY);
-        texRGB[d].draw(210 + texDepth[d].getWidth(), shiftY, dwHD, dhHD);
+        ofSetColor(255,255);
+        //texDepth[d].draw(200, shiftY);
+        //ofSetColor(255,100);
+        texRGB[d].draw(200 , shiftY);//, dwHD, dhHD);
+//        texRGB[d].draw(210 + texDepth[d].getWidth(), shiftY);//, dwHD, dhHD);
     }
-    
+    ofPopMatrix();
     panel.draw();
 }
 
